@@ -1,6 +1,4 @@
-package com.example.ketamaNode;
-
-import com.example.md5hashshard.Const;
+package com.example.md5hashshard;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -15,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by xingbowu on 17/4/10.
  */
-public class ConsistentHashDemo1 {
+public class ConsistentHashDemo {
     public static void main(String[] args) {
         HashMap<String, AtomicInteger> keyCountPerNode = new HashMap<>();
         List<String> keyList = new ArrayList<>();
@@ -26,16 +24,16 @@ public class ConsistentHashDemo1 {
         AtomicInteger deletedCount = new AtomicInteger();
 
         LoadNodeServerList(nodeServerList, Const.NODESERVERFILEPATH);
-        KetamaNodeLocator nodeShardInfo = new KetamaNodeLocator(nodeServerList, DefaultHashAlgorithm.KETAMA_HASH);
+        NodeShardInfo nodeShardInfo = new NodeShardInfo(nodeServerList);
         long nodeCount = nodeServerList.size();
 
         nodeServerListAdded.addAll(nodeServerList);
         nodeServerListAdded.add(Const.NEWIP);
-        KetamaNodeLocator nodeShardInfoAdded = new KetamaNodeLocator(nodeServerListAdded, DefaultHashAlgorithm.KETAMA_HASH);
+        NodeShardInfo nodeShardInfoAdded = new NodeShardInfo(nodeServerListAdded);
 
         nodeServerListDeleted.addAll(nodeServerList);
         nodeServerListDeleted.remove(Const.DELIP);
-        KetamaNodeLocator nodeShardInfoDeleted = new KetamaNodeLocator(nodeServerListAdded, DefaultHashAlgorithm.KETAMA_HASH);
+        NodeShardInfo nodeShardInfoDeleted = new NodeShardInfo(nodeServerListAdded);
 
         AtomicInteger keyCount = new AtomicInteger(0);
         float percentTotal = ((float)1/nodeCount);
@@ -43,9 +41,9 @@ public class ConsistentHashDemo1 {
         LoadNodeServerList(keyList, Const.KEYSFILEPATH);
         for (String key:keyList) {
             keyCount.getAndIncrement();
-            String  nodeName  = nodeShardInfo.getPrimary(key);
-            String nodeNameAdded = nodeShardInfoAdded.getPrimary(key);
-            String nodeNameDeleted = nodeShardInfoAdded.getPrimary(key);
+            String  nodeName  = nodeShardInfo.getNode(key);
+            String nodeNameAdded = nodeShardInfoAdded.getNode(key);
+            String nodeNameDeleted = nodeShardInfoAdded.getNode(key);
             if(!nodeName.equals(nodeNameAdded)){
                 addedCount.getAndIncrement();
             }

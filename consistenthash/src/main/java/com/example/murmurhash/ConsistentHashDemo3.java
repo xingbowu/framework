@@ -1,4 +1,4 @@
-package com.example.ketamaNode;
+package com.example.murmurhash;
 
 import com.example.md5hashshard.Const;
 
@@ -15,48 +15,50 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by xingbowu on 17/4/10.
  */
-public class ConsistentHashDemo1 {
+public class ConsistentHashDemo3 {
     public static void main(String[] args) {
         HashMap<String, AtomicInteger> keyCountPerNode = new HashMap<>();
         List<String> keyList = new ArrayList<>();
-        List<String> nodeServerList = new ArrayList<>();
-        List<String> nodeServerListAdded = new ArrayList<>();
-        List<String> nodeServerListDeleted = new ArrayList<>();
+        List<TsdShardInfo> nodeServerList = new ArrayList<>();
+        List<TsdShardInfo> nodeServerListAdded = new ArrayList<>();
+        List<TsdShardInfo> nodeServerListDeleted = new ArrayList<>();
         AtomicInteger addedCount = new AtomicInteger();
         AtomicInteger deletedCount = new AtomicInteger();
 
         LoadNodeServerList(nodeServerList, Const.NODESERVERFILEPATH);
-        KetamaNodeLocator nodeShardInfo = new KetamaNodeLocator(nodeServerList, DefaultHashAlgorithm.KETAMA_HASH);
+        Sharded<TsdInstance, TsdShardInfo> nodeShardInfo = new Sharded(nodeServerList);
         long nodeCount = nodeServerList.size();
 
         nodeServerListAdded.addAll(nodeServerList);
-        nodeServerListAdded.add(Const.NEWIP);
-        KetamaNodeLocator nodeShardInfoAdded = new KetamaNodeLocator(nodeServerListAdded, DefaultHashAlgorithm.KETAMA_HASH);
+        TsdShardInfo tsdShardInfoAdded = new TsdShardInfo(Const.NEWIP);
+        nodeServerListAdded.add(tsdShardInfoAdded);
+        Sharded<TsdInstance, TsdShardInfo> nodeShardInfoAdded = new Sharded(nodeServerListAdded);
 
         nodeServerListDeleted.addAll(nodeServerList);
-        nodeServerListDeleted.remove(Const.DELIP);
-        KetamaNodeLocator nodeShardInfoDeleted = new KetamaNodeLocator(nodeServerListAdded, DefaultHashAlgorithm.KETAMA_HASH);
+        TsdShardInfo tsdShardInfoDeleted = new TsdShardInfo(Const.DELIP);
+        nodeServerListDeleted.remove(tsdShardInfoDeleted);
+        Sharded<TsdInstance, TsdShardInfo> nodeShardInfoDeleted = new Sharded(nodeServerListDeleted);
 
         AtomicInteger keyCount = new AtomicInteger(0);
         float percentTotal = ((float)1/nodeCount);
 
-        LoadNodeServerList(keyList, Const.KEYSFILEPATH);
+        LoadKeyList(keyList, Const.KEYSFILEPATH);
         for (String key:keyList) {
             keyCount.getAndIncrement();
-            String  nodeName  = nodeShardInfo.getPrimary(key);
-            String nodeNameAdded = nodeShardInfoAdded.getPrimary(key);
-            String nodeNameDeleted = nodeShardInfoAdded.getPrimary(key);
-            if(!nodeName.equals(nodeNameAdded)){
+            TsdShardInfo  nodeName  = nodeShardInfo.getShardInfo(key);
+            TsdShardInfo nodeNameAdded = nodeShardInfoAdded.getShardInfo(key);
+            TsdShardInfo nodeNameDeleted = nodeShardInfoDeleted.getShardInfo(key);
+            if(!(nodeName.getHost().equals(nodeNameAdded.getHost()))){
                 addedCount.getAndIncrement();
             }
-            if(!nodeName.equals(nodeNameDeleted)){
+            if(!(nodeName.getHost().equals(nodeNameDeleted.getHost()))){
                 deletedCount.getAndIncrement();
             }
-            if (keyCountPerNode.containsKey(nodeName)){
-                keyCountPerNode.get(nodeName).getAndIncrement();
+            if (keyCountPerNode.containsKey(nodeName.getHost())){
+                keyCountPerNode.get(nodeName.getHost()).getAndIncrement();
             }else{
                 AtomicInteger counter = new AtomicInteger(1);
-                keyCountPerNode.put(nodeName,counter);
+                keyCountPerNode.put(nodeName.getHost(),counter);
             }
         }
         System.out.println("Nodes counts: " + nodeCount +
@@ -77,11 +79,28 @@ public class ConsistentHashDemo1 {
         System.out.println("----------------------------------");
         System.out.println("Added Node Same Node Percentage: "
                 + (keyCount.floatValue()-addedCount.floatValue())*100/keyCount.floatValue() +"%");
-        System.out.println("Added Node Same Node Percentage: "
+        System.out.println("Deleted Node Same Node Percentage: "
                 + (keyCount.floatValue()-deletedCount.floatValue())*100/keyCount.floatValue() +"%");
     }
 
-    public static void LoadNodeServerList(List<String> nodeServerList, String filePath) {
+    public static void LoadNodeServerList(List<TsdShardInfo> nodeServerList, String filePath) {
+        try {
+            FileReader fileReader = new FileReader(filePath);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String key;
+            while((key = bufferedReader.readLine())!=null){
+                TsdShardInfo shardInfo = new TsdShardInfo(key);
+                nodeServerList.add(shardInfo);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return;
+    }
+
+    public static void LoadKeyList(List<String> nodeServerList, String filePath) {
         try {
             FileReader fileReader = new FileReader(filePath);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
