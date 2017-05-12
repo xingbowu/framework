@@ -1,0 +1,2 @@
+mvn clean compile assembly:single
+java -javaagent:classmexer.jar -jar target/tsindex-1.0-SNAPSHOT.jar
