@@ -1,2 +1,0 @@
-Premain-Class: com.alibaba.memindex.ObjectSize
-Main-Class: com.alibaba.memindex.Test
