@@ -1,0 +1,2 @@
+Premain-Class: com.example.memindex.ObjectSize
+Main-Class: com.example.memindex.Test
