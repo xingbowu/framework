@@ -1,0 +1,10 @@
+/Users/xingbowu/javademo/rpcdemo/target/generated-sources/protobuf/grpc-java/com/grpc/hello/HelloServiceGrpc.java
+/Users/xingbowu/javademo/rpcdemo/target/generated-sources/protobuf/java/com/grpc/writedatapoint/WriteDataPoint.java
+/Users/xingbowu/javademo/rpcdemo/target/generated-sources/protobuf/grpc-java/com/grpc/writedatapoint/WriteDataPointServiceGrpc.java
+/Users/xingbowu/javademo/rpcdemo/src/main/java/innerdatapoint/WriteDataPointRPCClient.java
+/Users/xingbowu/javademo/rpcdemo/src/main/java/com/example/HelloClient.java
+/Users/xingbowu/javademo/rpcdemo/target/generated-sources/protobuf/grpc-java/com/grpc/querydatapoint/QueryDataPointServiceGrpc.java
+/Users/xingbowu/javademo/rpcdemo/src/main/java/innerdatapoint/WriteDataPointRPCServer.java
+/Users/xingbowu/javademo/rpcdemo/src/main/java/com/example/HelloServer.java
+/Users/xingbowu/javademo/rpcdemo/target/generated-sources/protobuf/java/com/grpc/querydatapoint/QueryDataPoint.java
+/Users/xingbowu/javademo/rpcdemo/target/generated-sources/protobuf/java/com/grpc/hello/HelloModel.java

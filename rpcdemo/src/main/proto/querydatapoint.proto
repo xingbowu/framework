@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package grpc.querydatapoint;
+
+option java_package = "com.grpc.querydatapoint";
+option java_outer_classname = "QueryDataPoint";
+
+
+message QueryDPRequest {
+  string metric = 1;
+  map<string, string> tags = 2;
+  int64 startTime = 3;
+  int64 endTime = 4;
+}
+
+message QueryDPReply {
+  repeated QueryDPs querydps = 1;
+}
+
+message QueryDPs {
+  string metric = 1;
+  map<string, string> tags = 2;
+  int64 timestamp = 3;
+  int64 value = 4;
+}
+
+// Service
+service QueryDataPointService {
+  rpc QueryDP(QueryDPRequest) returns (QueryDPReply) {}
+}

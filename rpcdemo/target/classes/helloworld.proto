@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package grpc.hello;
+
+option java_package = "com.grpc.hello";
+option java_outer_classname = "HelloModel";
+
+message GreetingRequest {
+  string name = 1;
+}
+
+message GreetingReply {
+  string greeting = 2;
+}
+
+//
+// Service
+//
+
+service HelloService {
+  rpc GetGreeting(GreetingRequest) returns (GreetingReply) {}
+}

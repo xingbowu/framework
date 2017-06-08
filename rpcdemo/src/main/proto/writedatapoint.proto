@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package grpc.writedatapoint;
+
+option java_package = "com.grpc.writedatapoint";
+option java_outer_classname = "WriteDataPoint";
+
+message PutDPRequest {
+  string metric = 1;
+  map<string, string> tags = 2;
+  int64 timestamp = 3;
+  int64 value = 4;
+}
+
+message PutDPReply {
+  bool code = 1;
+}
+
+// Service
+service WriteDataPointService {
+  rpc PutDP(PutDPRequest) returns (PutDPReply) {}
+}
