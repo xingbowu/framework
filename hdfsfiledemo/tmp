@@ -1,0 +1,1 @@
+{"start":"5m-ago","queries":[{"metric":"tsd.datapoints.added","aggregator":"sum","rate":true,"rateOptions":{"counter":true,"counterMax":100000000000,"resetValue":10000000000},"tags":{}}],"msResolution":true,"globalAnnotations":true,"showQuery":true}
